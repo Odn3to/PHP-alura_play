@@ -1,19 +1,32 @@
 <?php
 
 namespace Alura\Mvc\Controller;
+//use Alura\Mvc\Helper\HtmlRenderTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Nyholm\Psr7\Response;
+use Psr\Http\Server\RequestHandlerInterface;
+use League\Plates\Engine;
 
-class LoginFormController implements Controller
+class LoginFormController implements RequestHandlerInterface
 {
+    //use HtmlRenderTrait;
 
+    public function __construct(private Engine $templates)
+    {
+    } 
+    
 	/**
 	 */
-	public function processaRequisicao(): void {
+	public function handle(ServerRequestInterface $request): ResponseInterface {
 
         if(array_key_exists('logado', $_SESSION) && $_SESSION['logado'] === true){
-            header('Location: /');
-            return;
+            return new Response(302, [
+                'Location' => '/'
+            ]);
         }
 
-        require_once __DIR__ . '/../../Views/login-form.php';
+        //return new Response(200, body: $this->renderTemplate('login-form'));
+        return new Response(200, body: $this->templates->render('login-form'));
 	}
 }
